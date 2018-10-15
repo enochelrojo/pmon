@@ -11,7 +11,7 @@
 
 char* obtener_fecha_hora();
 void manejador_senal(int);
-void verificar_procesos(FILE*, pid_t[], int);
+void verificar_procesos(FILE*, pid_t*, int);
 
 
 /* Esta varibable define si pmon se sigue ejecutando o no */
@@ -87,14 +87,14 @@ void manejador_senal(int sig) {
     fclose(log);
 }
 
-void verificar_procesos(FILE* log, pid_t procesos[], int num_procesos) {
+void verificar_procesos(FILE* log, pid_t* procesos, int num_procesos) {
     int k;
 
     fprintf(log, "%s", obtener_fecha_hora());
 
     for(k = 0; k < num_procesos; k++) {
         if (procesos[k] > 0) {
-            if (kill(procesos[k], 0) == ESRCH) {
+            if (kill(procesos[k], 0) == -1 && errno == ESRCH) {
                 fprintf(log, "El proceso %d terminó\n", procesos[k]);
                 
                 /* Invalido el proceso para no verificarlo más */
